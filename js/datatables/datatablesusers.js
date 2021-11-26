@@ -12,21 +12,30 @@ $(document).ready(function () {
                 initComplete: function () {
                     this.api().columns().every(function () {
                         var column = this;
-                        var select = $('<select class="form-in-datatable"><option value=""></option></select>')
-                            .appendTo($(column.footer()).empty())
-                            .on('change', function () {
-                                var val = $.fn.dataTable.util.escapeRegex(
-                                    $(this).val()
-                                );
+                        if ([2, 3, 4, 5].includes(column.index())) {
 
-                                column
-                                    .search(val ? '^' + val + '$' : '', true, false)
-                                    .draw();
-                            });
+                            var select = $('<select class="form-in-datatable"><option value=""></option></select>')
+                                .appendTo($(column.footer()).empty())
+                                .on('change', function () {
+                                    var val = $.fn.dataTable.util.escapeRegex(
+                                        $(this).val()
+                                    );
 
-                        column.data().unique().sort().each(function (d, j) {
-                            select.append('<option value="' + d + '">' + d + '</option>')
-                        });
+                                    column
+                                        .search(val ? '^' + val + '$' : '', true, false)
+                                        .draw();
+                                });
+                            if (column.index() === 5) {
+                                column.data().unique().sort().each(function (d, j) {
+                                    select.append('<option value="' + d + '">' + d + '</option>')
+                                });
+                            } else if (column.index() === 2) {
+                                select.append('<option value="guest">Guest</option><option value="member">Member</option>')
+                            } else {
+                                select.append('<option value="true">Enabled</option><option value="false">Disabled</option>')
+
+                            }
+                        }
                     });
                 },
                 language: {
@@ -118,7 +127,7 @@ $(document).ready(function () {
                                 <ul class="dropdown-menu" style="min-width:260px;">
                                     <li><a class="dropdown-item" href=index.html?page=ViewUser&Tenantfilter=${TenantID}&UserID=${id}><i data-bs-toggle="tooltip" data-bs-placement="top" title="View User" class="fas fa-eye fa-fw"></i>View User</a></li>
                                     <li><a class="dropdown-item" href=index.html?page=EditUser&Tenantfilter=${TenantID}&UserID=${id}><i data-bs-toggle="tooltip" data-bs-placement="top" title="Edit User" class="fas fa-cog fa-fw"></i>Edit User</a></li>
-                                    <li><a class="dropdown-item" href=index.html?page=BECView&Tenantfilter=${TenantID}&UserID=${id}><i data-bs-toggle="tooltip" data-bs-placement="top" title="Research Compromised Account" class="fas fa-search-location fa-fw"></i>Research Compromised Account</a></li>
+                                    <li><a class="dropdown-item" href=index.html?page=BECview&Tenantfilter=${TenantID}&UserID=${id}><i data-bs-toggle="tooltip" data-bs-placement="top" title="Research Compromised Account" class="fas fa-search-location fa-fw"></i>Research Compromised Account</a></li>
                                     <nothing class="APILink">
                                     <li><a class="dropdown-item${accountDisabledDD}" actionname="send push for ${row.displayName}" href=api/ExecSendPush?TenantFilter=${TenantID}&UserEmail=${row.mail}><i data-bs-toggle="tooltip" data-bs-placement="top" title="Send MFA Push to User" class="fas fa-exchange-alt fa-fw"></i></i>Send MFA Push</a></li>
                                     <li><a class="dropdown-item${mailDisabledDD}" actionname="convert ${row.displayName} to a shared mailbox" href=api/ExecConvertToSharedMailbox?TenantFilter=${TenantID}&ID=${id}><i data-bs-toggle="tooltip" data-bs-placement="top" title="Convert to Shared" class="fas fa-share-alt fa-fw"></i>Convert to Shared Mailbox</a></li>
